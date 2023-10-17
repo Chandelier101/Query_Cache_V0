@@ -1,0 +1,9 @@
+Flask
+transformers
+requests
+fuzzywuzzy
+numpy
+pickle
+sentence-transformers
+InstructorEmbedding
+flair
