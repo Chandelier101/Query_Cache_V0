@@ -1,12 +1,44 @@
 from InstructorEmbedding import INSTRUCTOR
-from transformers import AutoTokenizer, AutoModelForTokenClassification
-from transformers import pipeline
+from typing import Any, Dict, List
+from flair.data import Sentence
+from flair.models import SequenceTagger
 
-def ner():
-    tokenizer = AutoTokenizer.from_pretrained('flair/ner-english-ontonotes-large')
-    model = AutoModelForTokenClassification.from_pretrained('flair/ner-english-ontonotes-large')
-    ner = pipeline("ner", model=model, tokenizer=tokenizer)
-    return ner
+class NER_model():
+    def __init__(
+        self,
+        path: str,
+    ):
+        self.tagger = SequenceTagger.load(path)
+
+    def __call__(self, data: str) -> List[Dict[str, Any]]:
+
+        input = data
+
+        sentence = Sentence(input)
+
+        self.tagger.predict(sentence, label_name="predicted")
+        # print(sentence.get_spans("predicted"))
+        entities = []
+        for span in sentence.get_spans("predicted"):
+            if len(span.tokens) == 0:
+                continue
+            current_entity = {
+                "entity_group": span.tag,
+                "word": span.text,
+                "start": span.tokens[0].start_position,
+                "end": span.tokens[-1].end_position,
+                "score": span.score,
+            }
+
+            entities.append(current_entity)
+
+        return entities
+
+# def ner():
+#     tokenizer = AutoTokenizer.from_pretrained('flair/ner-english-ontonotes-large')
+#     model = AutoModelForTokenClassification.from_pretrained('flair/ner-english-ontonotes-large')
+#     ner = pipeline("ner", model=model, tokenizer=tokenizer)
+#     return ner
 
 # def cache_query_mask(API_URL,headers,payload,outputs=None):
 #   masked = []

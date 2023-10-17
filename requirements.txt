@@ -1,9 +1,9 @@
-Flask
-transformers
+flask
 requests
 fuzzywuzzy
 numpy
 pickle
 sentence-transformers
-InstructorEmbedding
 flair
+transformers==4.30.2
+InstructorEmbedding
